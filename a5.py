@@ -21,23 +21,14 @@ def remove_if_exists(lst: Any, elem: Any) -> None:
 # constructor before worrying about these errors (if they're still there after you've
 # implemented the constructor that's probably a sign your constructor has a bug in it)
 class Board:
-    """Represents a state (situation) in a Sudoku puzzle. Some cells may have filled in
-    numbers while others have not. Cells that have not been filled in hold the potential
-    values that could be assigned to the cell (i.e. have not been ruled out from the
-    row, column or subgrid)
+    min_length = 9
+    min_row = 0
+    min_col = 0
 
-    Attributes:
-        num_nums_placed - number of numbers placed so far (initially 0)
-        size - the size of the board (this will always be 9, but is convenient to have
-            an attribute for this for debugging purposes)
-        rows - a list of 9 lists, each with 9 elements (imagine a 9x9 sudoku board).
-            Each element will itself be a list of the numbers that remain possible to
-            assign in that square. Initially, each element will contain a list of the
-            numbers 1 through 9 (so a triply nested 9x9x9 list to start) as all numbers
-            are possible when no assignments have been made. When an assignment is made
-            this innermost element won't be a list of possibilities anymore but the
-            single number that is the assignment.
-    """
+    def find_most_constrained_cell(self) -> Tuple[int, int]:
+        for row in range (self.size):
+            for col in range (self.size):
+                cell.self.rows
 
     def __init__(self):
         """Constructor for a board, sets up a board with each element having all
@@ -116,7 +107,11 @@ class Board:
         Returns:
             True if we have failed to fill out the puzzle, False otherwise
         """
-        pass
+        for row in self.rows:
+            for col in row:
+                if col == []:
+                    return True
+        return False
 
     def goal_test(self) -> bool:
         """Check if we've completed the puzzle (if we've placed all the numbers).
