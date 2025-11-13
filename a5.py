@@ -21,14 +21,6 @@ def remove_if_exists(lst: Any, elem: Any) -> None:
 # constructor before worrying about these errors (if they're still there after you've
 # implemented the constructor that's probably a sign your constructor has a bug in it)
 class Board:
-    min_length = 9
-    min_row = 0
-    min_col = 0
-
-    def find_most_constrained_cell(self) -> Tuple[int, int]:
-        for row in range (self.size):
-            for col in range (self.size):
-                cell.self.rows
 
     def __init__(self):
         """Constructor for a board, sets up a board with each element having all
@@ -36,17 +28,13 @@ class Board:
         self.size: int = 9
         self.num_nums_placed: int = 0
 
-        # triply nested lists, representing a 9x9 sudoku board
-        # 9 quadrants, 9 cells in each 3*3 subgrid, 9 possible numbers in each cell
-        # Note: using Any in the type hint since the cell can be either a list (when it
-        # has not yet been assigned a value) or a value (once it has been assigned)
-        # Note II: a lone underscore is a common convention for unused variables
+
         self.rows: List[List[Any]] = (
             [[list(range(1, 10)) for _ in range(self.size)] for _ in range(self.size)]
         )
 
     def __str__(self) -> str:
-        """String representation of the board"""
+
         row_str = ""
         for r in self.rows:
             row_str += f"{r}\n"
@@ -90,14 +78,21 @@ class Board:
         return [(r, c) for c in subgrids[col // 3] for r in subgrids[row // 3]]
 
     def find_most_constrained_cell(self) -> Tuple[int, int]:
-        """Finds the coordinates (row and column indices) of the cell that contains the
-        fewest possible values to assign (the shortest list). Note: in the case of ties
-        return the coordinates of the first minimum size cell found
+        min_length = 9
+        min_row = 0
+        min_col = 0
 
-        Returns:
-            a tuple of row, column index identifying the most constrained cell
-        """
-        pass
+        for row in range(self.size):
+            for col in range(self.size):
+                cell = self.rows[row][col]
+                # print(f"({row},{col}): {cell}")
+                if isinstance(cell, list):
+                    if len(cell) < min_length:
+                        min_length = len(cell)
+                        min_row = row
+                        min_col = col
+        # print(f"({min_row},{min_col})")
+        return (min_row, min_col)
 
     def failure_test(self) -> bool:
         """Check if we've failed to correctly fill out the puzzle. If we find a cell
@@ -120,7 +115,8 @@ class Board:
         Returns:
             True if we've placed all numbers, False otherwise
         """
-        pass
+        return self.num_nums_placed == self.size * self.size
+
 
     def update(self, row: int, column: int, assignment: int) -> None:
         """Assigns the given value to the cell given by passed in row and column
@@ -134,7 +130,19 @@ class Board:
             column - index of the column to assign
             assignment - value to place at given row, column coordinate
         """
-        pass
+        self.rows[row][column] = assignment
+        self.num_nums_placed += 1
+
+        for r in range(self.size):
+            remove_if_exists(self.rows[r][column], assignment)
+
+        for c in range(self.size):
+            remove_if_exists(self.rows[row][c], assignment)
+
+        subgrid_coords = self.subgrid_coordinates(row, column)
+        # print(subgrid_coords)
+        for (r, c) in subgrid_coords:
+            remove_if_exists(self.rows[r][c], assignment)
 
 
 def DFS(state: Board) -> Board:
@@ -149,7 +157,23 @@ def DFS(state: Board) -> Board:
     Returns:
         either None in the case of invalid input or a solved board
     """
-    pass
+    the_stack = Stack()
+    the_stack.push(state)
+
+    while not the_stack.is_empty():
+        current_board: Board = the_stack.pop()
+        # print(current_board)
+        if current_board.goal_test():
+            return current_board
+        if not current_board.failure_test():
+            row, col = current_board.find_most_constrained_cell()
+            print(row, col)
+            possible_values = current_board.rows[row][col]
+            print(possible_values)
+            for val in possible_values:
+                new_board: Board = copy.deepcopy(current_board)
+                new_board.update(row, col, val)
+                the_stack.push(new_board)
 
 
 def BFS(state: Board) -> Board:
@@ -171,54 +195,54 @@ if __name__ == "__main__":
     # uncomment the below lines once you've implemented the board class
    
     # # CODE BELOW HERE RUNS YOUR BFS/DFS
-    # print("<<<<<<<<<<<<<< Solving Sudoku >>>>>>>>>>>>>>")
+    print("<<<<<<<<<<<<<< Solving Sudoku >>>>>>>>>>>>>>")
 
-    # def test_dfs_or_bfs(use_dfs: bool, moves: List[Tuple[int, int, int]]) -> None:
-    #     b = Board()
-    #     # make initial moves to set up board
-    #     for move in moves:
-    #         b.update(*move)
+    def test_dfs_or_bfs(use_dfs: bool, moves: List[Tuple[int, int, int]]) -> None:
+        b = Board()
+        # make initial moves to set up board
+        for move in moves:
+            b.update(*move)
 
     #     # print initial board
-    #     print("<<<<< Initial Board >>>>>")
-    #     b.print_pretty()
+        print("<<<<< Initial Board >>>>>")
+        b.print_pretty()
     #     # solve board
-    #     solution = (DFS if use_dfs else BFS)(b)
+        solution = (DFS if use_dfs else BFS)(b)
     #     # print solved board
-    #     print("<<<<< Solved Board >>>>>")
-    #     solution.print_pretty()
+        print("<<<<< Solved Board >>>>>")
+        solution.print_pretty()
 
     # # sets of moves for the different games
-    # first_moves = [
-    #     (0, 1, 7),
-    #     (0, 7, 1),
-    #     (1, 2, 9),
-    #     (1, 3, 7),
-    #     (1, 5, 4),
-    #     (1, 6, 2),
-    #     (2, 2, 8),
-    #     (2, 3, 9),
-    #     (2, 6, 3),
-    #     (3, 1, 4),
-    #     (3, 2, 3),
-    #     (3, 4, 6),
-    #     (4, 1, 9),
-    #     (4, 3, 1),
-    #     (4, 5, 8),
-    #     (4, 7, 7),
-    #     (5, 4, 2),
-    #     (5, 6, 1),
-    #     (5, 7, 5),
-    #     (6, 2, 4),
-    #     (6, 5, 5),
-    #     (6, 6, 7),
-    #     (7, 2, 7),
-    #     (7, 3, 4),
-    #     (7, 5, 1),
-    #     (7, 6, 9),
-    #     (8, 1, 3),
-    #     (8, 7, 8),
-    # ]
+    first_moves = [
+        (0, 1, 7),
+        (0, 7, 1),
+        (1, 2, 9),
+        (1, 3, 7),
+        (1, 5, 4),
+        (1, 6, 2),
+        (2, 2, 8),
+        (2, 3, 9),
+        (2, 6, 3),
+        (3, 1, 4),
+        (3, 2, 3),
+        (3, 4, 6),
+        (4, 1, 9),
+        (4, 3, 1),
+        (4, 5, 8),
+        (4, 7, 7),
+        (5, 4, 2),
+        (5, 6, 1),
+        (5, 7, 5),
+        (6, 2, 4),
+        (6, 5, 5),
+        (6, 6, 7),
+        (7, 2, 7),
+        (7, 3, 4),
+        (7, 5, 1),
+        (7, 6, 9),
+        (8, 1, 3),
+        (8, 7, 8),
+     ]
 
     # second_moves = [
     #     (0, 1, 2),
