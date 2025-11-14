@@ -23,8 +23,6 @@ def remove_if_exists(lst: Any, elem: Any) -> None:
 class Board:
 
     def __init__(self):
-        """Constructor for a board, sets up a board with each element having all
-        numbers as possibilities"""
         self.size: int = 9
         self.num_nums_placed: int = 0
 
@@ -42,8 +40,6 @@ class Board:
         return f"num_nums_placed: {self.num_nums_placed}\nboard (rows): \n{row_str}"
 
     def print_pretty(self):
-        """Prints all numbers assigned to cells, excluding lists of possible numbers
-        that can still be assigned to cells"""
         row_str = ""
         for i, r in enumerate(self.rows):
             if not i % 3:
@@ -59,19 +55,6 @@ class Board:
         print(f"num_nums_placed: {self.num_nums_placed}\nboard (rows): \n{row_str}")
 
     def subgrid_coordinates(self, row: int, col: int) -> List[Tuple[int, int]]:
-        """Get all coordinates of cells in a given cell's subgrid (3x3 space)
-
-        Integer divide to get column & row indices of subgrid then take all combinations
-        of cell indices with the row/column indices from those subgrids (also known as
-        the outer or Cartesian product)
-
-        Args:
-            row - index of the cell's row, 0 - 8
-            col - index of the cell's col, 0 - 8
-
-        Returns:
-            list of (row, col) that represent all cells in the box.
-        """
         subgrids = [(0, 1, 2), (3, 4, 5), (6, 7, 8)]
         # Note: row // 3 gives the index of the subgrid for the row index, this is one
         # of 0, 1 or 2, col // 3 gives us the same for the column
@@ -95,13 +78,6 @@ class Board:
         return (min_row, min_col)
 
     def failure_test(self) -> bool:
-        """Check if we've failed to correctly fill out the puzzle. If we find a cell
-        that contains an [], then we have no more possibilities for the cell but haven't
-        assigned it a value so fail.
-
-        Returns:
-            True if we have failed to fill out the puzzle, False otherwise
-        """
         for row in self.rows:
             for col in row:
                 if col == []:
@@ -109,27 +85,10 @@ class Board:
         return False
 
     def goal_test(self) -> bool:
-        """Check if we've completed the puzzle (if we've placed all the numbers).
-        Naively checks that we've placed as many numbers as cells on the board
-
-        Returns:
-            True if we've placed all numbers, False otherwise
-        """
         return self.num_nums_placed == self.size * self.size
 
 
     def update(self, row: int, column: int, assignment: int) -> None:
-        """Assigns the given value to the cell given by passed in row and column
-        coordinates. By assigning we mean set the cell to the value so instead the cell
-        being a list of possibities it's just the new assignment value.  Update all
-        affected cells (row, column & subgrid) to remove the possibility of assigning
-        the given value.
-
-        Args:
-            row - index of the row to assign
-            column - index of the column to assign
-            assignment - value to place at given row, column coordinate
-        """
         self.rows[row][column] = assignment
         self.num_nums_placed += 1
 
@@ -146,17 +105,6 @@ class Board:
 
 
 def DFS(state: Board) -> Board:
-    """Performs a depth first search. Takes a Board and attempts to assign values to
-    most constrained cells until a solution is reached or a mistake has been made at
-    which point it backtracks.
-
-    Args:
-        state - an instance of the Board class to solve, need to find most constrained
-            cell and attempt an assignment
-
-    Returns:
-        either None in the case of invalid input or a solved board
-    """
     the_stack = Stack()
     the_stack.push(state)
 
@@ -178,17 +126,6 @@ def DFS(state: Board) -> Board:
 
 
 def BFS(state: Board) -> Board:
-    """Performs a breadth first search. Takes a Board and attempts to assign values to
-    most constrained cells until a solution is reached or a mistake has been made at
-    which point it backtracks.
-
-    Args:
-        state - an instance of the Board class to solve, need to find most constrained
-            cell and attempt an assignment
-
-    Returns:
-        either None in the case of invalid input or a solved board
-    """
     the_queue = Queue()
     the_queue.push(state)
 
