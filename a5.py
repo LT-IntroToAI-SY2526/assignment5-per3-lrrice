@@ -1,4 +1,5 @@
 import copy  # to make a deepcopy of the board
+import time
 from typing import List, Any, Tuple
 
 # import Stack and Queue classes for BFS/DFS
@@ -107,17 +108,24 @@ class Board:
 def DFS(state: Board) -> Board:
     the_stack = Stack()
     the_stack.push(state)
+    iterations = 0
+    start_time = time.time() 
 
     while not the_stack.is_empty():
+        iterations += 1
         current_board: Board = the_stack.pop()
         # print(current_board)
         if current_board.goal_test():
+            end_time = time.time()
+            elapsed_time = end_time - start_time
+            print(f"DFS took {iterations} iterations in {elapsed_time:.4f} seconds")
             return current_board
+        
         if not current_board.failure_test():
             row, col = current_board.find_most_constrained_cell()
-            print(row, col)
+            #print(row, col)
             possible_values = current_board.rows[row][col]
-            print(possible_values)
+            #print(possible_values)
             for val in possible_values:
                 new_board: Board = copy.deepcopy(current_board)
                 new_board.update(row, col, val)
@@ -128,17 +136,25 @@ def DFS(state: Board) -> Board:
 def BFS(state: Board) -> Board:
     the_queue = Queue()
     the_queue.push(state)
+    iterations = 0
+    start_time = time.time() 
 
     while not the_queue.is_empty():
+        iterations += 1
         current_board: Board = the_queue.pop()
         # print(current_board)
+
         if current_board.goal_test():
+            end_time = time.time()
+            elapsed_time = end_time - start_time
+            print(f"BFS took {iterations} iterations in {elapsed_time:.4f} seconds")
             return current_board
+        
         if not current_board.failure_test():
             row, col = current_board.find_most_constrained_cell()
-            print(row, col)
+            #print(row, col)
             possible_values = current_board.rows[row][col]
-            print(possible_values)
+            #print(possible_values)
             for val in possible_values:
                 new_board: Board = copy.deepcopy(current_board)
                 new_board.update(row, col, val)
@@ -228,6 +244,7 @@ if __name__ == "__main__":
         (8, 5, 7),
         (8, 7, 5),
     ]
+
     #Create a sudoku board.
     b = Board()
     #Place the 28 assignments in first_moves on the board.
